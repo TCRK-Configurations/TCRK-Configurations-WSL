@@ -6,14 +6,6 @@ sudo apt update;
 sudo apt upgrade -y;
 echo "------------------------------ Done updating & upgrading ------------------------------";
 
-# Setup ChezMoi
-echo "------------------------------ Setting up ChezMoi ------------------------------";
-cd /;
-sudo sh -c "$(curl -fsLS get.chezmoi.io)";
-sudo /bin/chezmoi init https://github.com/TCRK-Configurations/TCRK-Configurations-WSL_DotFiles.git;
-cd;
-echo "------------------------------ Done setting up ChezMoi ------------------------------";
-
 # Setup ZSH #
 echo "------------------------------ Setting up ZSH ------------------------------";
 sudo apt install zsh -y;
@@ -43,7 +35,7 @@ cd;
 echo "------------------------------ Done setting up Starship ------------------------------";
 
 # Setup up Azure CLI #
-echo "------------------------------ Generating a new SSH key pair ------------------------------";
+echo "------------------------------ Setting up Azure CLI ------------------------------";
 sudo apt install ca-certificates curl apt-transport-https lsb-release gnupg -y;
 curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null;
 AZ_REPO=$(lsb_release -cs);
@@ -51,7 +43,16 @@ echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/trusted.gpg.d/mic
 sudo apt update;
 sudo apt install azure-cli -y;
 az login;
-echo "------------------------------ Done generating a new SSH key pair ------------------------------";
+echo "------------------------------ Done setting up Azure CLI ------------------------------";
+
+# Setup ChezMoi
+echo "------------------------------ Setting up ChezMoi ------------------------------";
+cd /;
+sudo sh -c "$(curl -fsLS get.chezmoi.io)";
+/bin/chezmoi init https://github.com/TCRK-Configurations/TCRK-Configurations-WSL_DotFiles.git
+/bin/chezmoi update;
+cd;
+echo "------------------------------ Done setting up ChezMoi ------------------------------";
 
 # Generate GitHub SSH key #
 echo "------------------------------ Generating a new SSH key pair ------------------------------";
@@ -62,3 +63,11 @@ ssh-add .ssh/github_personal;
 cat .ssh/github_personal.pub;
 cd;
 echo "------------------------------ Done generating a new SSH key pair ------------------------------";
+
+# Setting the DotFiles repo to SSH
+echo "------------------------------ Setting the DotFiles repo to SSH ------------------------------";
+cd .local/share/chezmoi/;
+git remote remove origin;
+git remote add origin git@github.com:TCRK-Configurations/TCRK-Configurations-WSL_DotFiles.git;
+cd;
+echo "------------------------------ Done setting the DotFiles repo to SSH ------------------------------";
